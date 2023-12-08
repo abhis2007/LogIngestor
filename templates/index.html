@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>{% block title %}Log Ingestor UI{% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}"> -->
+</head>
+
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+  </script>
+  <div class="row bg-light">
+    <div class="col-md-1"></div>
+    <div class="col-md-10 m-3">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" name="inlineRadioOptions" type="radio" id="level" value="level" checked>
+        <label class="form-check-label" for="level">Level</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" name="inlineRadioOptions" type="radio" id="message" value="message">
+        <label class="form-check-label" for="message">Message</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" name="inlineRadioOptions" type="radio" id="timestamp" value="timestamp">
+        <label class="form-check-label" for="timestamp">Timestamp</label>
+      </div>
+
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" name="inlineRadioOptions" type="radio" id="resourceId" value="resourceId">
+        <label class="form-check-label" for="resourceId">ResourceId</label>
+      </div>
+
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" name="inlineRadioOptions" type="radio" id="traceId" value="traceId">
+        <label class="form-check-label" for="traceId">TraceId</label>
+      </div>
+
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" name="inlineRadioOptions" type="radio" id="spanId" value="spanId">
+        <label class="form-check-label" for="spanId">SpanId</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" name="inlineRadioOptions" type="radio" id="commitId" value="commitId">
+        <label class="form-check-label" for="commit">Commit</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" name="inlineRadioOptions" type="radio" id="inlineradio3"
+          value="parentResourceId">
+        <label class="form-check-label" for="parentResourceId">ParentResourceId</label>
+      </div>
+    </div>
+    <div class="col-md-1 "></div>
+  </div>
+  <div class="row">
+    <div class="col-md-2 mt-2"></div>
+    <div id="msg" class="col-md-8 text-danger text-center"></div>
+  </div>
+  <div class="row">
+    <div class="col-md-9">
+      <div class="container">
+        <form class="text-center" id="logFilterForm">
+          <div class="form-check form-check-inline form-group">
+            <input type="text" class="form-control" name="srchVal" id="txtsearch" placeholder="Filter Value" required>
+          </div>
+          <!-- d-none -->
+          <div class="form-check form-check-inline form-group">
+            <!-- <input type="datetime" class="form-control" id="time_stamp"> -->
+            <input type="datetime-local" id="utcDateTimeFrom" name="utcDateTimeFrom" class="form-control" required>
+          </div>
+
+          <div class="form-check form-check-inline form-group">
+            <!-- <input type="datetime" class="form-control" id="time_stamp"> -->
+            <input type="datetime-local" id="utcDateTimeTo" name="utcDateTimeTo" class="form-control">
+          </div>
+
+          <div id="rangeBtn" class="form-check form-check-inline form-group">
+            <input type="button" class="btn btn-primary form-inline" onclick="rangeQuery()" value="Range">
+          </div>
+
+          <button type="submit" onclick="submitForm()" class="btn btn-primary">Apply Filter</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-md-3">
+
+      <!-- Button to trigger the modal -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#refineSearchModal">
+        Advance Search
+      </button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="refineSearchModal" tabindex="-1" role="dialog"
+        aria-labelledby="refineSearchModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="refineSearchModalLabel">Refine Search</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body m-2">
+              <!-- <form> -->
+              <form id="refineSearchForm">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="Level" class="form-label">Level</label>
+                    <input type="text" class="form-control" id="level_AS" name="level_AS">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="Message" class="form-label">Message</label>
+                    <input type="text" class="form-control" id="message_AS" name="message_AS">
+                  </div>
+                </div>
+                <!-- </div> -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="ResourceId" class="form-label">ResourceId</label>
+                    <input type="text" class="form-control" id="resourceId_AS" name="resourceId_AS">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="TraceId" class="form-label">TraceId</label>
+                    <input type="text" class="form-control" id="traceId_AS" name="traceId_AS">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="SpanId" class="form-label">SpanId</label>
+                    <input type="text" class="form-control" id="spanId_AS" name="spanId_AS">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="Commit" class="form-label">Commit</label>
+                    <input type="text" class="form-control" id="commit_AS" name="commit_AS">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="ParentResourceId" class="form-label">ParentResourceId</label>
+                    <input type="text" class="form-control" id="parentResourceId_AS" name="parentResourceId_AS">
+                  </div>
+                </div>
+                <div class="row">
+                  <label for="timestamp" class="form-label">Timestamp</label>
+                  <div class="col-md-6">
+                    <input type="datetime-local" id="utcDateTimeFrom_AS" name="utcDateTimeFrom" class="form-control">
+                  </div>
+                  <div class="col-md-6">
+                    <input type="datetime-local" id="utcDateTimeTo_AS" name="utcDateTimeTo" class="form-control">
+                  </div>
+                </div>
+                <button onclick="AdvanceFilter()" class="btn btn-primary mt-2 text-center">Apply Advance
+                  Filter</button>
+              </form>
+              <!-- </form> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+
+  <footer>
+    <!-- <p>&copy; 2023 My App</p> -->
+  </footer>
+
+  <!-- Bootstrap JS and Popper.js CDN (required for Bootstrap JS components) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    var radioButtons = document.getElementsByName('inlineRadioOptions');
+    var selectedBtn = "level";
+    document.getElementById("rangeBtn").style.display = "none";
+    if (selectedBtn == "level") {
+      document.getElementById('utcDateTimeFrom').style.display = 'none';
+      document.getElementById('utcDateTimeTo').style.display = 'none';
+    }
+    radioButtons.forEach(function(radioButton) {
+      radioButton.addEventListener('change', function() {
+        // Perform some action based on the selected radio button
+        console.log('Selected value:', this.value);
+        var valueSel = this.value;
+        selectedBtn = valueSel;
+        if (valueSel != "timestamp") {
+          document.getElementById('utcDateTimeFrom').style.display = 'none';
+          document.getElementById("rangeBtn").style.display = "none";
+          document.getElementById('utcDateTimeTo').style.display = 'none';
+          document.getElementById('txtsearch').style.display = 'block';
+        } else {
+          document.getElementById('utcDateTimeFrom').style.display = 'block';
+          document.getElementById('utcDateTimeTo').style.display = 'none';
+          document.getElementById("rangeBtn").style.display = "block";
+          document.getElementById('txtsearch').style.display = 'none';
+        }
+      });
+    });
+
+    function submitForm() {
+      if (selectedBtn != "timestamp" && document.getElementById("txtsearch").value == "") {
+        document.getElementById("msg").textContent = "Search value cannot be empty";
+        return;
+      } else if (selectedBtn == "timestamp") {
+        var isValEmpty = 0
+        if (document.getElementById('utcDateTimeFrom').value == "") {
+          document.getElementById("msg").textContent = "Search value cannot be emptyhgf";
+          return;
+        }
+      }
+      var radioButtons = document.getElementsByName('inlineRadioOptions');
+      var form = document.getElementById('logFilterForm');
+      form.action = "/search/" + selectedBtn + "/";
+      form.method = 'POST';
+      form.submit();
+    }
+
+    function rangeQuery() {
+      document.getElementById("rangeBtn").style.display = "none";
+      document.getElementById('utcDateTimeTo').style.display = 'block';
+    }
+
+    function AdvanceFilter() {
+      fromDate = document.getElementById("utcDateTimeFrom_AS").value
+      toDate = document.getElementById("utcDateTimeTo_AS").value
+      if (fromDate == "" && toDate) {
+        document.getElementById("utcDateTimeFrom_AS").required = true;
+      } else {
+        var advanceSearchForm = document.getElementById("refineSearchForm")
+        advanceSearchForm.action = "/refine_search/";
+        advanceSearchForm.method = 'POST';
+        advanceSearchForm.submit();
+      }
+    }
+  </script>
+</body>
+
+</html>

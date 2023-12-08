@@ -1,0 +1,9 @@
+<!-- templates/home_partial.html -->
+{% for entry in results %}
+    <tr>
+        <td>{{ entry[0] }}</td>
+        <td>{{ entry[1] }}</td>
+        <td>{{ entry[2] }}</td>
+        <!-- Add more columns as needed -->
+    </tr>
+{% endfor %}
