@@ -1,0 +1,80 @@
+<!-- templates/home.html -->
+{% extends 'index.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<table class="table table-borderless m-3 p-1">
+    <thead>
+        <tr>
+            <th scope="col md-1">Level</th>
+            <th scope="col md-3">Message</th>
+            <th scope="col">ResourceId</th>
+            <th scope="col">Timestamp</th>
+            <th scope="col">TraceId</th>
+            <th scope="col">SpanId</th>
+            <th scope="col">Commit</th>
+            <th scope="col">parentResourceId</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- <div id="scroll-container"> -->
+    <tbody id="scroll-container">
+        <!-- templates/home_partial.html -->
+        {% for entry in results %}
+        <tr>
+            <td>{{ entry[0] }}</td>
+            <td>{{ entry[1] }}</td>
+            <td>{{ entry[2] }}</td>
+            <td>{{ entry[3] }}</td>
+            <td>{{ entry[4] }}</td>
+            <td>{{ entry[5] }}</td>
+            <td>{{ entry[6] }}</td>
+            <td>{{ entry[7] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <!-- </div> -->
+    </tbody>
+</table>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    // alert("loaded");
+    var page = 1;
+
+    function loadMoreItems() {
+        jQuery.noConflict();
+        var s = 'http://localhost:3000/load-more/' + page;
+        // alert(s);
+        $.get('http://localhost:3000/load-more/' + page, function(data) {
+            // alert(page);
+            if (Array.isArray(data)) {
+                // alert(data.length)
+                if (data.length > 0) {
+                    // Append new items to the container
+                    data.forEach(function(item) {
+                        $('#scroll-container').append('<tr><td>' + item[0] + '</td><td>' + item[1] +
+                            '</td><td>' + item[2] + '</td><td>' + item[3] + '</td><td>' + item[4] +
+                            '</td><td>' + item[5] + '</td><td>' + item[6] + '</td><td>' + item[7] +
+                            '</td></tr>');
+                    });
+                    page += 1;
+                }
+            } else {
+                alert("invalid data received")
+            }
+        });
+    }
+    // Load more items when the user reaches the bottom of the scroll container
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+            // alert("scrolled");
+            loadMoreItems();
+        }
+    });
+    // Initial load
+    // loadMoreItems();
+</script>
+{% endblock %}
